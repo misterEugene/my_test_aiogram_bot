@@ -1,5 +1,5 @@
 from aiogram import Bot, Dispatcher, types, executor
-from aiogram.types import ReplyKeyboardMarkup
+from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 from dotenv import load_dotenv
 import os
 
@@ -21,8 +21,14 @@ admin_panel = ReplyKeyboardMarkup(resize_keyboard=True)
 admin_panel.add('Добавить товар').add('Удалить товар').add('Сделать рассылку')
 
 
+catalog_list = InlineKeyboardMarkup(row_width=2)
+catalog_list.add(InlineKeyboardButton(text='Футболки', url='https://google.com'),
+                 InlineKeyboardButton(text='Шорты', url='https://google.com'),
+                 InlineKeyboardButton(text='Кроссовки', url='https://google.com'))
+
+
 @dp.message_handler(commands=['start'])
-async def cmd_start(message: types.Message):
+async def cmd_start(message: types.Message): 
     await message.answer_sticker('CAACAgIAAxkBAAOfZPw7eHgV7u_5J42anIQzzwyfUm0AAjoUAAKH28lLt4S2aCX5a1QwBA')
     await message.answer(f'{message.from_user.first_name} {message.from_user.last_name}, добро пожаловать в магазин кроссовок!', reply_markup=main)
     if message.from_user.id == int(os.getenv('ADMIN_ID')):
@@ -36,7 +42,7 @@ async def cmd_id(message: types.Message):
 
 @dp.message_handler(text='Каталог')
 async def catalog(message: types.Message):
-    await message.answer(f'Каталог пуст!')
+    await message.answer(f'Каталог пуст!', reply_markup=catalog_list)
 
 
 @dp.message_handler(text='Корзина')
